@@ -1,0 +1,189 @@
+LINK TO LABS:
+https://github.com/syedahmedali568/OS-Labs-CT-353-DT-22301
+
+
+LAB 03:
+lab 03:
+#include <stdio.h>
+#include <stdlib.h>
+#include <pthread.h>
+
+// Function prototype
+void *print_message_function(void *ptr);
+
+int main() {
+    pthread_t thread1, thread2;
+    char *message1 = "Thread 1";
+    char *message2 = "Thread 2";
+    int iret1, iret2;
+
+    // Create independent threads
+    iret1 = pthread_create(&thread1, NULL, print_message_function, (void *) message1);
+    iret2 = pthread_create(&thread2, NULL, print_message_function, (void *) message2);
+
+    // Wait for threads to complete
+    pthread_join(thread1, NULL);
+    pthread_join(thread2, NULL);
+
+    printf("Thread 1 returns: %d\n", iret1);
+    printf("Thread 2 returns: %d\n", iret2);
+
+    return 0;
+}
+
+void *print_message_function(void *ptr) {
+    char *message = (char *) ptr;
+    printf("%s\n", message);
+    return NULL;
+}
+
+
+
+LAB 04:
+
+LAB 04:
+#include <stdio.h>
+
+void main() {
+    int buffer[10], bufsize = 10;
+    int in = 0, out = 0, produce, consume, choice = 0;
+
+    while (choice != 3) {
+        printf("\n1. Produce \t 2. Consume \t 3. Exit");
+        printf("\nEnter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                if ((in + 1) % bufsize == out) {
+                    printf("\nBuffer is Full");
+                } else {
+                    printf("Enter the value to produce: ");
+                    scanf("%d", &produce);
+                    buffer[in] = produce;
+                    in = (in + 1) % bufsize;
+                }
+                break;
+
+            case 2:
+                if (in == out) {
+                    printf("\nBuffer is Empty");
+                } else {
+                    consume = buffer[out];
+                    printf("The consumed value is %d", consume);
+                    out = (out + 1) % bufsize;
+                }
+                break;
+
+            case 3:
+                printf("Exiting...\n");
+                break;
+
+            default:
+                printf("Invalid choice. Try again.\n");
+        }
+    }
+}
+
+LAB 10:
+
+LAB 10:
+#include <stdio.h>
+
+int main() {
+    int ms, ps, nop, np, rempages;
+    int i, j, x, y, offset, pa;
+    int s[10], fno[10][20];
+
+    printf("\nEnter the memory size: ");
+    scanf("%d", &ms);
+
+    printf("Enter the page size: ");
+    scanf("%d", &ps);
+
+    nop = ms / ps;
+    printf("The number of pages available in memory: %d\n", nop);
+
+    printf("Enter the number of processes: ");
+    scanf("%d", &np);
+
+    rempages = nop;
+
+    for (i = 1; i <= np; i++) {
+        printf("\nEnter number of pages required for process %d: ", i);
+        scanf("%d", &s[i]);
+
+        if (s[i] > rempages) {
+            printf("Memory is full. Cannot allocate pages for process %d.\n", i);
+            break;
+        }
+
+        rempages -= s[i];
+
+        printf("Enter page table for process %d (frame numbers):\n", i);
+        for (j = 0; j < s[i]; j++) {
+            scanf("%d", &fno[i][j]);
+        }
+    }
+
+    printf("\nEnter Logical Address to convert to Physical Address:\n");
+    printf("Enter process number, page number, and offset: ");
+    scanf("%d %d %d", &x, &y, &offset);
+
+    if (x > np || y >= s[x] || offset >= ps) {
+        printf("Invalid process number, page number, or offset.\n");
+    } else {
+        pa = fno[x][y] * ps + offset;
+        printf("The Physical Address is: %d\n", pa);
+    }
+
+    return 0;
+}
+
+
+
+LAB 11:
+
+LAB 11:
+#include <stdio.h>
+#include <stdlib.h>
+
+int main() {
+    int base[20], limit[20], n, i, segment, offset, physicalAddr;
+
+    printf("Program for Segmentation\n");
+
+    printf("Enter the number of segments: ");
+    scanf("%d", &n);
+
+    printf("Enter the base address and limit for each segment:\n");
+    for (i = 0; i < n; i++) {
+        printf("Segment %d base: ", i);
+        scanf("%d", &base[i]);
+        printf("Segment %d limit: ", i);
+        scanf("%d", &limit[i]);
+    }
+
+    printf("Enter the segment number: ");
+    scanf("%d", &segment);
+
+    if (segment < 0 || segment >= n) {
+        printf("Invalid segment number.\n");
+        return 0;
+    }
+
+    printf("Enter the offset: ");
+    scanf("%d", &offset);
+
+    if (offset < limit[segment]) {
+        physicalAddr = base[segment] + offset;
+        printf("\n\tSegmentNo.\tBaseAddr\tPhysicalAddr\n");
+        printf("\t   %d\t\t  %d\t\t  %d\n", segment, base[segment], physicalAddr);
+    } else {
+        printf("Offset exceeds the segment limit.\n");
+    }
+
+    return 0;
+}
+
+
